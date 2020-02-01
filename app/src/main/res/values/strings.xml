@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">Sync Contacts App</string>
+    <string name="action_settings">Settings</string>
+    <string name="viewing_activity">Viewing activity</string>
+</resources>
