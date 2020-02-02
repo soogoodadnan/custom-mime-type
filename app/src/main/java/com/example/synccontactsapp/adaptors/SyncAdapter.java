@@ -41,7 +41,7 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
     	Log.i("Sync adapter called");
 //        ContentResolver.setSyncAutomatically(account, ContactsContract.AUTHORITY, true);
 
-        ContactsManager.addContact(getContext(), new MyContact("Jhon","Doe"));
+        ContactsManager.addContact(getContext(), new MyContact("0","Jhon Doe","123456","Jhondoe@test.com" ));
 
 
     }

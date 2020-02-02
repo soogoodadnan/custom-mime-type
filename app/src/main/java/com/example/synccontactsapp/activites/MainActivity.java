@@ -4,7 +4,9 @@ import android.Manifest;
 import android.accounts.AccountManager;
 import android.accounts.AccountManagerCallback;
 import android.accounts.AccountManagerFuture;
+import android.app.ProgressDialog;
 import android.content.pm.PackageManager;
+import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 
@@ -23,6 +25,7 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
+import android.os.Handler;
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -34,6 +37,7 @@ public class MainActivity extends AppCompatActivity {
     ArrayList<Contact> listContacts = new ArrayList<>();
     ListView lvContacts;
     ContactsAdapter adapterContacts;
+    ProgressDialog dialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,6 +45,9 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+        dialog = new ProgressDialog(MainActivity.this);
+        dialog.setMessage("Doing something, please wait.");
+        dialog.setCancelable(false);
 
         lvContacts = (ListView) findViewById(R.id.lvContacts);
         adapterContacts = new ContactsAdapter(this, listContacts);
@@ -88,37 +95,50 @@ public class MainActivity extends AppCompatActivity {
 
 
     private void showContactsList() {
+
+        dialog.show();
         addNewAccount(AccountGeneral.ACCOUNT_TYPE, AccountGeneral.AUTHTOKEN_TYPE_FULL_ACCESS);
 
         listContacts.clear();
-        listContacts.addAll(new ContactFetcher(this).fetchAll());
+        listContacts.addAll(new ContactFetcher(MainActivity.this).fetchAll());
         adapterContacts.notifyDataSetChanged();
 
-        // ContactsManager.addContact(MainActivity.this, new MyContact(name, name));
+//         ContactsManager.addContact(MainActivity.this, new MyContact("Test", "Test"));
 
-        for(Contact data : listContacts){
+        AsyncTask.execute(new Runnable() {
+            @Override
+            public void run() {
+                for (Contact data : listContacts) {
 //            ContactsManager.updateMyContact(MainActivity.this,data.name);
-            ContactsManager.addContact(MainActivity.this, new MyContact(data.name, data.id));
-        }
+                    System.out.println("Data " + data.name);
+
+                    String phone = "0";
+                    String name = data.name;
+                    String id = data.id;
+                    String email = data.name+"@test.com";
+
+                    if (data.numbers.size() > 0 && data.numbers.get(0) != null) {
+                        phone =   data.numbers.get(0).number;
+                    }
+
+                    if (data.emails.size() > 0 && data.emails.get(0) != null) {
+                        email =   data.emails.get(0).address;
+
+                    }
+
+
+                    ContactsManager.addContact(MainActivity.this, new MyContact(id,name,phone, email));
+                }
+                if (dialog.isShowing()) {
+                    dialog.dismiss();
+                }
+
+            }
+        });
+
 
     }
 
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.menu_main, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        int id = item.getItemId();
-        if (id == R.id.action_settings) {
-            return true;
-        }
-
-        return super.onOptionsItemSelected(item);
-    }
 
 
     private boolean checkIfAlreadyhavePermission() {

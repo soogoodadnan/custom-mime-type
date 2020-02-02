@@ -38,7 +38,7 @@ public class ContactsManager {
         ops.add(ContentProviderOperation.newInsert(addCallerIsSyncAdapterParameter(RawContacts.CONTENT_URI, true))
                 .withValue(RawContacts.ACCOUNT_NAME, AccountGeneral.ACCOUNT_NAME)
                 .withValue(RawContacts.ACCOUNT_TYPE, AccountGeneral.ACCOUNT_TYPE)
-                .withValue(ContactsContract.RawContacts.CONTACT_ID, contact_id)
+                .withValue(ContactsContract.RawContacts.CONTACT_ID, 0)
                 .build());
 
         // this is for display name
@@ -52,28 +52,28 @@ public class ContactsManager {
                 .withValueBackReference(Data.RAW_CONTACT_ID, 0)
                 .withValue(Data.MIMETYPE, StructuredName.CONTENT_ITEM_TYPE)
                 .withValue(StructuredName.GIVEN_NAME, contact.name)
-                .withValue(StructuredName.FAMILY_NAME, contact.lastName)
+//                .withValue(StructuredName.FAMILY_NAME, contact.lastName)
                 .build());
 
         ops.add(ContentProviderOperation.newInsert(addCallerIsSyncAdapterParameter(Data.CONTENT_URI, true))
                 .withValueBackReference(Data.RAW_CONTACT_ID, 0)
                 .withValue(ContactsContract.Data.MIMETYPE,ContactsContract.CommonDataKinds.Phone.CONTENT_ITEM_TYPE)
-                .withValue(ContactsContract.CommonDataKinds.Phone.NUMBER, "12342145")
+                .withValue(ContactsContract.CommonDataKinds.Phone.NUMBER,  contact.phone)
                 .build());
 
 
         ops.add(ContentProviderOperation.newInsert(addCallerIsSyncAdapterParameter(Data.CONTENT_URI, true))
                 .withValueBackReference(Data.RAW_CONTACT_ID, 0)
                 .withValue(ContactsContract.Data.MIMETYPE, ContactsContract.CommonDataKinds.Email.CONTENT_ITEM_TYPE)
-                .withValue(ContactsContract.CommonDataKinds.Email.DATA, "sample@email.com")
+                .withValue(ContactsContract.CommonDataKinds.Email.DATA,  contact.email)
                 .build());
 
         //This is our custom data field in our contact
         ops.add(ContentProviderOperation.newInsert(addCallerIsSyncAdapterParameter(Data.CONTENT_URI, true))
                 .withValueBackReference(Data.RAW_CONTACT_ID, 0)
                 .withValue(Data.MIMETYPE, MIMETYPE)
-                .withValue(Data.DATA1, 12345)
-                .withValue(Data.DATA2, context.getString(R.string.app_name))
+                .withValue(Data.DATA1, contact.phone)
+                .withValue(Data.DATA2, contact.email)
                 .withValue(Data.DATA3, context.getString(R.string.app_name))
                 .build());
         try {

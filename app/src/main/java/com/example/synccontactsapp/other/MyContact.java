@@ -6,10 +6,12 @@ public class MyContact {
 	public String email;
 	public String lastName;
 	public String phone;
-	public int id;
+	public String id;
 	
-	public MyContact(String name, String lastName) {
+	public MyContact(String id,String name,String phone,String email) {
+		this.id = id;
 		this.name = name;
-		this.lastName = lastName;
+		this.phone = phone;
+		this.email = email;
 	}
 }
