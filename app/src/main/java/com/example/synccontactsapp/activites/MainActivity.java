@@ -101,8 +101,6 @@ public class MainActivity extends AppCompatActivity {
 
         listContacts.clear();
         listContacts.addAll(new ContactFetcher(MainActivity.this).fetchAll());
-        adapterContacts.notifyDataSetChanged();
-
 //         ContactsManager.addContact(MainActivity.this, new MyContact("Test", "Test"));
 
         AsyncTask.execute(new Runnable() {
@@ -129,13 +127,14 @@ public class MainActivity extends AppCompatActivity {
 
                     ContactsManager.addContact(MainActivity.this, new MyContact(id,name,phone, email));
                 }
-                if (dialog.isShowing()) {
-                    dialog.dismiss();
-                }
+
 
             }
         });
-
+        adapterContacts.notifyDataSetChanged();
+        if (dialog.isShowing()) {
+            dialog.dismiss();
+        }
 
     }
 
