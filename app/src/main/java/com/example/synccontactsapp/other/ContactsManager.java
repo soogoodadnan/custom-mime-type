@@ -8,8 +8,10 @@ import android.content.ContentProviderOperation;
 import android.content.ContentProviderResult;
 import android.content.ContentResolver;
 import android.content.Context;
+import android.content.OperationApplicationException;
 import android.database.Cursor;
 import android.net.Uri;
+import android.os.RemoteException;
 import android.provider.ContactsContract;
 import android.provider.ContactsContract.CommonDataKinds.Email;
 import android.provider.ContactsContract.CommonDataKinds.StructuredName;
@@ -25,7 +27,7 @@ public class ContactsManager {
 
     public static void addContact(Context context, MyContact contact) { // My Contact object is a custom object made by you
         ContentResolver resolver = context.getContentResolver();
-        resolver.delete(RawContacts.CONTENT_URI, RawContacts.ACCOUNT_TYPE + " = ?", new String[] { AccountGeneral.ACCOUNT_TYPE });
+        resolver.delete(RawContacts.CONTENT_URI, RawContacts.ACCOUNT_TYPE + " = ?", new String[]{AccountGeneral.ACCOUNT_TYPE});
 
         ArrayList<ContentProviderOperation> ops = new ArrayList<ContentProviderOperation>();
 
@@ -57,15 +59,15 @@ public class ContactsManager {
 
         ops.add(ContentProviderOperation.newInsert(addCallerIsSyncAdapterParameter(Data.CONTENT_URI, true))
                 .withValueBackReference(Data.RAW_CONTACT_ID, 0)
-                .withValue(ContactsContract.Data.MIMETYPE,ContactsContract.CommonDataKinds.Phone.CONTENT_ITEM_TYPE)
-                .withValue(ContactsContract.CommonDataKinds.Phone.NUMBER,  contact.phone)
+                .withValue(ContactsContract.Data.MIMETYPE, ContactsContract.CommonDataKinds.Phone.CONTENT_ITEM_TYPE)
+                .withValue(ContactsContract.CommonDataKinds.Phone.NUMBER, contact.phone)
                 .build());
 
 
         ops.add(ContentProviderOperation.newInsert(addCallerIsSyncAdapterParameter(Data.CONTENT_URI, true))
                 .withValueBackReference(Data.RAW_CONTACT_ID, 0)
                 .withValue(ContactsContract.Data.MIMETYPE, ContactsContract.CommonDataKinds.Email.CONTENT_ITEM_TYPE)
-                .withValue(ContactsContract.CommonDataKinds.Email.DATA,  contact.email)
+                .withValue(ContactsContract.CommonDataKinds.Email.DATA, contact.email)
                 .build());
 
         //This is our custom data field in our contact
@@ -76,14 +78,16 @@ public class ContactsManager {
                 .withValue(Data.DATA2, contact.email)
                 .withValue(Data.DATA3, context.getString(R.string.app_name))
                 .build());
+
+        ContentProviderResult[] results = new ContentProviderResult[0];
         try {
-            ContentProviderResult[] results = resolver.applyBatch(ContactsContract.AUTHORITY, ops);
-            if (results.length == 0)
-                ;
-        }
-        catch (Exception e) {
+            results = resolver.applyBatch(ContactsContract.AUTHORITY, ops);
+        } catch (OperationApplicationException e) {
+            e.printStackTrace();
+        } catch (RemoteException e) {
             e.printStackTrace();
         }
+        System.out.println("Inserted Field:  " + results.length);
     }
 
     private static Uri addCallerIsSyncAdapterParameter(Uri uri, boolean isSyncOperation) {
@@ -102,9 +106,9 @@ public class ContactsManager {
 
     public static void updateMyContact(Context context, String name) {
         int id = -1;
-        Cursor cursor = context.getContentResolver().query(Data.CONTENT_URI, new String[] { Data.RAW_CONTACT_ID, Data.DISPLAY_NAME, Data.MIMETYPE, Data.CONTACT_ID },
+        Cursor cursor = context.getContentResolver().query(Data.CONTENT_URI, new String[]{Data.RAW_CONTACT_ID, Data.DISPLAY_NAME, Data.MIMETYPE, Data.CONTACT_ID},
                 StructuredName.DISPLAY_NAME + "= ?",
-                new String[] {name}, null);
+                new String[]{name}, null);
         if (cursor != null && cursor.moveToFirst()) {
             do {
                 id = cursor.getInt(0);
@@ -134,12 +138,10 @@ public class ContactsManager {
 
             try {
                 context.getContentResolver().applyBatch(ContactsContract.AUTHORITY, ops);
-            }
-            catch (Exception e) {
+            } catch (Exception e) {
                 e.printStackTrace();
             }
-        }
-        else {
+        } else {
             Log.i("id not found");
         }
 

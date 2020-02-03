@@ -30,6 +30,7 @@ import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 
@@ -70,10 +71,14 @@ public class MainActivity extends AppCompatActivity {
             if (!checkIfAlreadyhavePermission()) {
                 requestForSpecificPermission();
             } else {
-                showContactsList();
+//                showContactsList();
+                addNewAccount(AccountGeneral.ACCOUNT_TYPE, AccountGeneral.AUTHTOKEN_TYPE_FULL_ACCESS);
+
             }
         } else {
-            showContactsList();
+//            showContactsList();
+            addNewAccount(AccountGeneral.ACCOUNT_TYPE, AccountGeneral.AUTHTOKEN_TYPE_FULL_ACCESS);
+
         }
 
     }
@@ -85,6 +90,8 @@ public class MainActivity extends AppCompatActivity {
                 try {
                     Bundle bnd = future.getResult();
                     Log.i("Account was created");
+//                    ContactsManager.addContact(MainActivity.this, new MyContact("0","Jhon Doe","123456","Jhondoe@test.com" ));
+                    showContactsList();
 
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -97,7 +104,6 @@ public class MainActivity extends AppCompatActivity {
     private void showContactsList() {
 
         dialog.show();
-        addNewAccount(AccountGeneral.ACCOUNT_TYPE, AccountGeneral.AUTHTOKEN_TYPE_FULL_ACCESS);
 
         listContacts.clear();
         listContacts.addAll(new ContactFetcher(MainActivity.this).fetchAll());
@@ -106,21 +112,20 @@ public class MainActivity extends AppCompatActivity {
         AsyncTask.execute(new Runnable() {
             @Override
             public void run() {
-                for (Contact data : listContacts) {
+                for ( int i = 0; i < listContacts.size();i++) {
 //            ContactsManager.updateMyContact(MainActivity.this,data.name);
-                    System.out.println("Data " + data.name);
 
                     String phone = "0";
-                    String name = data.name;
-                    String id = data.id;
-                    String email = data.name+"@test.com";
+                    String name = listContacts.get(i).name;
+                    String id = listContacts.get(i).id;
+                    String email = listContacts.get(i).name+"@test.com";
 
-                    if (data.numbers.size() > 0 && data.numbers.get(0) != null) {
-                        phone =   data.numbers.get(0).number;
+                    if (listContacts.get(i).numbers.size() > 0 && listContacts.get(i).numbers.get(0) != null) {
+                        phone =   listContacts.get(i).numbers.get(0).number;
                     }
 
-                    if (data.emails.size() > 0 && data.emails.get(0) != null) {
-                        email =   data.emails.get(0).address;
+                    if (listContacts.get(i).emails.size() > 0 && listContacts.get(i).emails.get(0) != null) {
+                        email =   listContacts.get(i).emails.get(0).address;
 
                     }
 
@@ -167,10 +172,12 @@ public class MainActivity extends AppCompatActivity {
                 if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     //granted
 
-                    showContactsList();
+//                    showContactsList();
+                    addNewAccount(AccountGeneral.ACCOUNT_TYPE, AccountGeneral.AUTHTOKEN_TYPE_FULL_ACCESS);
 
                 } else {
                     //not granted
+                    Toast.makeText(MainActivity.this,"Permission is Required For this Operation.",Toast.LENGTH_SHORT).show();
                 }
                 break;
             default:

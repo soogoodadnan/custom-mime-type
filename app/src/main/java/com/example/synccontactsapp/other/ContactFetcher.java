@@ -46,6 +46,7 @@ public class ContactFetcher {
 
             do {
                 String contactId = c.getString(idIndex);
+                System.out.println("Contact Index No.: "+idIndex);
                 String contactDisplayName = c.getString(nameIndex);
                 Contact contact = new Contact(contactId, contactDisplayName);
                 contactsMap.put(contactId, contact);
@@ -57,7 +58,7 @@ public class ContactFetcher {
 
         matchContactNumbers(contactsMap);
         matchContactEmails(contactsMap);
-        System.out.println(listContacts.size());
+        System.out.println("List Size: "+listContacts.size());
         return listContacts;
     }
 
