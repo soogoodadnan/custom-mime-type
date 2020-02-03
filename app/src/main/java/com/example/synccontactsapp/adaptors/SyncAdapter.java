@@ -20,9 +20,11 @@ package com.example.synccontactsapp.adaptors;
 import android.accounts.Account;
 import android.content.AbstractThreadedSyncAdapter;
 import android.content.ContentProviderClient;
+import android.content.ContentResolver;
 import android.content.Context;
 import android.content.SyncResult;
 import android.os.Bundle;
+import android.provider.ContactsContract;
 
 import com.example.synccontactsapp.other.ContactsManager;
 import com.example.synccontactsapp.other.Log;
@@ -39,7 +41,7 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
     public void onPerformSync(Account account, Bundle extras, String authority,
                               ContentProviderClient provider, SyncResult syncResult) {
     	Log.i("Sync adapter called");
-//        ContentResolver.setSyncAutomatically(account, ContactsContract.AUTHORITY, true);
+        ContentResolver.setSyncAutomatically(account, ContactsContract.AUTHORITY, true);
 
         ContactsManager.addContact(getContext(), new MyContact("0","Jhon Doe","123456","Jhondoe@test.com" ));
 

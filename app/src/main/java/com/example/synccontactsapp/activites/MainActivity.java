@@ -115,10 +115,10 @@ public class MainActivity extends AppCompatActivity {
                 for ( int i = 0; i < listContacts.size();i++) {
 //            ContactsManager.updateMyContact(MainActivity.this,data.name);
 
-                    String phone = "0";
+                    String phone = "";
                     String name = listContacts.get(i).name;
                     String id = listContacts.get(i).id;
-                    String email = listContacts.get(i).name+"@test.com";
+                    String email ="";
 
                     if (listContacts.get(i).numbers.size() > 0 && listContacts.get(i).numbers.get(0) != null) {
                         phone =   listContacts.get(i).numbers.get(0).number;
