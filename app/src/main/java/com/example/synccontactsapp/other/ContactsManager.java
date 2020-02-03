@@ -27,7 +27,7 @@ public class ContactsManager {
 
     public static void addContact(Context context, MyContact contact) { // My Contact object is a custom object made by you
         ContentResolver resolver = context.getContentResolver();
-        resolver.delete(RawContacts.CONTENT_URI, RawContacts.ACCOUNT_TYPE + " = ?", new String[]{AccountGeneral.ACCOUNT_TYPE});
+//        resolver.delete(RawContacts.CONTENT_URI, RawContacts.ACCOUNT_TYPE + " = ?", new String[]{AccountGeneral.ACCOUNT_TYPE});
 
         ArrayList<ContentProviderOperation> ops = new ArrayList<ContentProviderOperation>();
 
@@ -40,7 +40,7 @@ public class ContactsManager {
         ops.add(ContentProviderOperation.newInsert(addCallerIsSyncAdapterParameter(RawContacts.CONTENT_URI, true))
                 .withValue(RawContacts.ACCOUNT_NAME, AccountGeneral.ACCOUNT_NAME)
                 .withValue(RawContacts.ACCOUNT_TYPE, AccountGeneral.ACCOUNT_TYPE)
-                .withValue(ContactsContract.RawContacts.CONTACT_ID, 0)
+                .withValue(ContactsContract.RawContacts.CONTACT_ID, contact_id)
                 .build());
 
         // this is for display name
@@ -79,6 +79,7 @@ public class ContactsManager {
                 .withValue(Data.DATA3, context.getString(R.string.app_name))
                 .build());
 
+
         ContentProviderResult[] results = new ContentProviderResult[0];
         try {
             results = resolver.applyBatch(ContactsContract.AUTHORITY, ops);
@@ -87,7 +88,7 @@ public class ContactsManager {
         } catch (RemoteException e) {
             e.printStackTrace();
         }
-        System.out.println("Inserted Field:  " + results.length);
+        System.out.println("Inserted Field :: " + contact.name + " :: " + results.length);
     }
 
     private static Uri addCallerIsSyncAdapterParameter(Uri uri, boolean isSyncOperation) {
