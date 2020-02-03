@@ -4,7 +4,6 @@ public class MyContact {
 	
 	public String name;
 	public String email;
-	public String lastName;
 	public String phone;
 	public String id;
 	

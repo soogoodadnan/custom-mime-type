@@ -133,13 +133,20 @@ public class MainActivity extends AppCompatActivity {
                     ContactsManager.addContact(MainActivity.this, new MyContact(id,name,phone, email));
                 }
 
+                runOnUiThread(new Runnable() {
 
+                    @Override
+                    public void run() {
+
+                        adapterContacts.notifyDataSetChanged();
+                        if (dialog.isShowing()) {
+                            dialog.dismiss();
+                        }
+
+                    }
+                });
             }
         });
-        adapterContacts.notifyDataSetChanged();
-        if (dialog.isShowing()) {
-            dialog.dismiss();
-        }
 
     }
 
